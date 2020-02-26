@@ -1,0 +1,56 @@
+import Marionette from 'backbone.marionette';
+
+import FormView from './form';
+import ListView from './list';
+import LayoutTemplate from '../templates/layout.hbs';
+
+export default class TodoView extends Marionette.LayoutView
+{
+  constructor(options)
+  {
+    options.template = LayoutTemplate;
+    options.el = '#app-hook';
+    options.regions = {
+      form: '.form',
+      list: '.list'
+    };
+
+    super(options);
+  }
+
+  onRender()
+  {
+    const formView = new FormView({model: this.model});
+    const listView = new ListView({collection: this.collection});
+
+    this.showChildView('form', formView);
+    this.showChildView('list', listView);
+    $('#add-btn').attr('disabled', true)
+  }
+
+  collectionEvents()
+  {
+    return {
+      add: 'itemAdded'
+    };
+  }
+
+  onChildviewAddTodoItem(child)
+  {
+    this.model.set({
+      text: child.ui.text.val()
+    }, {validate: true});
+
+    if (this.model.isValid()) {
+      const items = this.model.pick('text');
+      this.collection.add(items);
+    }
+  }
+
+  itemAdded()
+  {
+    this.model.set({
+      text: ''
+    });
+  }
+}

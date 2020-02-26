@@ -1,0 +1,7 @@
+<input type="checkbox"/>
+{{#if isEditMode}}
+  <input type="text" class="edit-input" value="{{this.prevText}}">
+{{else}}
+<span>{{this.text}}</span>
+{{/if}}
+<button><img src="../../assets/delete-icon.svg"/></button>
